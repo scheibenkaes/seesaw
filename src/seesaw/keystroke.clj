@@ -19,7 +19,7 @@
   InputEvent/ALT_MASK  "alt"
 })
 
-(defn- preprocess-descriptor [s]
+(defn- preprocess-descriptor [^String s]
   (let [mask (modifier-masks (.. (Toolkit/getDefaultToolkit) getMenuShortcutKeyMask))]
     (clojure.string/join mask (.split s "menu"))))
 
@@ -41,8 +41,8 @@
   (cond 
     (nil? arg) nil
     (instance? KeyStroke arg) arg
-    (char? arg) (KeyStroke/getKeyStroke arg)
-    :else (if-let [ks (KeyStroke/getKeyStroke (preprocess-descriptor (str arg)))]
+    (char? arg) (KeyStroke/getKeyStroke ^Character arg)
+    :else (if-let [ks (KeyStroke/getKeyStroke ^String (preprocess-descriptor (str arg)))]
             ks
             (throw (IllegalArgumentException. (str "Invalid keystroke descriptor: " arg))))))
 
