@@ -16,7 +16,7 @@
 (defn check-args 
   [condition message]
   (if-not condition
-    (throw (IllegalArgumentException. message))
+    (throw (IllegalArgumentException. ^String message))
     true))
   
 (defmacro cond-doto
@@ -65,14 +65,14 @@
     (fn [m [k v]] (assoc m k v))
     {}
     (map 
-      #(vector %1 (.. klass (getDeclaredField (constantize-keyword %1)) (get nil)))
+      #(vector %1 (.. ^Class klass (getDeclaredField (constantize-keyword %1)) (get nil)))
       fields)))
     
   
 (defn camelize
   "Convert input string to camelCase from hyphen-case"
   [s]
-  (clojure.string/replace s #"-(.)" #(.toUpperCase (%1 1))))
+  (clojure.string/replace s #"-(.)" #(.toUpperCase ^String (%1 1))))
 
 (defn boolean? [b]
   "Return true if b is exactly true or false. Useful for handling optional
@@ -135,12 +135,12 @@
   (seq 
     ; TODO PROTOCOL!
     (cond
-      (instance? javax.swing.JFrame c) (if-let [mb (.getJMenuBar c)] 
-                                         (cons mb (.getComponents c)) 
-                                         (.getComponents c))
-      (instance? javax.swing.JMenuBar c) (.getSubElements c)
-      (instance? javax.swing.JMenu c)    (.getSubElements c)
-      (isa? (type c) java.awt.Container)    (.getComponents c)
+      (instance? javax.swing.JFrame c) (if-let [mb (.getJMenuBar ^javax.swing.JFrame c)] 
+                                         (cons mb (.getComponents ^javax.swing.JFrame c)) 
+                                         (.getComponents ^javax.swing.JFrame c))
+      (instance? javax.swing.JMenuBar c) (.getSubElements ^javax.swing.JMenuBar c)
+      (instance? javax.swing.JMenu c)    (.getSubElements ^javax.swing.JMenu c)
+      (isa? (type c) java.awt.Container)    (.getComponents ^java.awt.Container c)
       :else nil)))
 
 (defn collect
