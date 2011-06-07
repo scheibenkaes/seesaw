@@ -41,11 +41,11 @@
           font-name (:name opts)
           font-style (get style-table (or style :plain))
           font-size (or size 12)
-          from (to-font from)]
+          ^Font from (to-font from)]
       (if from
         (let [derived-style (if style font-style (.getStyle from))
               derived-size (if size font-size (.getSize from))]
-          (.deriveFont from derived-style (float derived-size)))
+          (.deriveFont from ^Integer derived-style (float derived-size)))
         (Font. (get name-table font-name font-name) font-style font-size)))))
 
 (defn default-font
