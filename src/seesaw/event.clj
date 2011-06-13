@@ -30,20 +30,20 @@
                :component-moved
                :component-resized
                :component-shown}
-    :install #(.addComponentListener %1 %2)
+    :install #(.addComponentListener ^java.awt.Component %1 %2)
   }
                                     
   :property-change {
     :name    :property-change
     :class   PropertyChangeListener
     :events  #{:property-change}
-    :install #(.addPropertyChangeListener %1 %2)
+    :install #(.addPropertyChangeListener ^java.awt.Component %1 %2)
   }
   :key {
     :name    :key
     :class   KeyListener
     :events  #{:key-pressed :key-released :key-typed}
-    :install #(.addKeyListener %1 %2)
+    :install #(.addKeyListener ^java.awt.Component %1 %2)
   }
   :window {
     :name    :window
@@ -51,23 +51,23 @@
     :events  #{:window-activated :window-deactivated 
               :window-closed :window-closing :window-opened
               :window-deiconified :window-iconified}
-    :install  #(.addWindowListener %1 %2)
+    :install  #(.addWindowListener ^java.awt.Window %1 %2)
   }
   :focus {
     :name    :focus
     :class   FocusListener
     :events  #{:focus-gained :focus-lost}
-    :install #(.addFocusListener %1 %2)
+    :install #(.addFocusListener ^java.awt.Component %1 %2)
   }
   :document {
     :name    :document
     :class   DocumentListener
     :events  #{:changed-update :insert-update :remove-update}
     :install (fn [target listener] 
-               (.addDocumentListener 
+               (.addDocumentListener ^Document
                  (if (instance? Document target) 
                    target
-                   (.getDocument target))
+                   (.getDocument ^javax.swing.text.JTextComponent target))
                  listener))
   }
   :action {
@@ -86,25 +86,25 @@
     :name    :item
     :class   ItemListener
     :events  #{:item-state-changed}
-    :install #(.addItemListener %1 %2)
+    :install #(.addItemListener ^javax.swing.AbstractButton %1 %2)
   }
   :mouse { 
     :name    :mouse
     :class   MouseListener
     :events  #{:mouse-clicked :mouse-entered :mouse-exited :mouse-pressed :mouse-released}
-    :install #(.addMouseListener %1 %2)
+    :install #(.addMouseListener ^java.awt.Component %1 %2)
   }
   :mouse-motion { 
     :name    :mouse-motion
     :class   MouseMotionListener
     :events  #{:mouse-moved :mouse-dragged}
-    :install #(.addMouseMotionListener %1 %2)
+    :install #(.addMouseMotionListener ^java.awt.Component %1 %2)
   }
   :mouse-wheel { 
     :name    :mouse-wheel
     :class   MouseWheelListener
     :events  #{:mouse-wheel-moved}
-    :install #(.addMouseWheelListener %1 %2)
+    :install #(.addMouseWheelListener ^java.awt.Component %1 %2)
   }
   :list-selection { 
     :name    :list-selection
@@ -112,9 +112,9 @@
     :events  #{:value-changed}
     :named-events #{:list-selection} ; Suppress reversed map entry
     :install (fn [target listener]
-                (.addListSelectionListener 
+                (.addListSelectionListener
                   (cond
-                    (instance? javax.swing.JTable target) (.getSelectionModel target)
+                    (instance? javax.swing.JTable target) (.getSelectionModel ^javax.swing.JTable target)
                     :else target)
                   listener))
   }
@@ -123,7 +123,7 @@
     :class   TreeSelectionListener
     :events  #{:value-changed}
     :named-events #{:tree-selection} ; Suppress reversed map entry
-    :install #(.addTreeSelectionListener %1 %2)
+    :install #(.addTreeSelectionListener ^javax.swing.JTree %1 %2)
   }
 })
 
@@ -162,7 +162,7 @@
       ; the symbol is very important here since the def-reify-listener
       ; macro is expecting a symbol NOT a class instance! So many hours 
       ; wasted...
-      `(def-reify-listener ~(symbol (.getName klass)) ~events))))
+      `(def-reify-listener ~(symbol (.getName ^Class klass)) ~events))))
 
 (reify-all-event-groups)
 
@@ -259,7 +259,7 @@
   (reduce
     (fn [result target]
       (cond
-        (instance? javax.swing.ButtonGroup target) (concat result (enumeration-seq (.getElements target)))
+        (instance? javax.swing.ButtonGroup target) (concat result (enumeration-seq (.getElements ^javax.swing.ButtonGroup target)))
         :else (conj result target)))  
     []
     targets))
